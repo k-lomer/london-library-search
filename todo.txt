@@ -1,0 +1,23 @@
+Add boroughs:
+    Barnet - Prism
+    Bexley - Arena
+    Bromley - Prism
+    Greenwich - Prism
+    Haringey - ???
+    Islington - Prism
+    Lambeth - ???
+    Wandsworth - Prism
+multithread catalogue searches
+multithread Spydus
+multithread SirsiDynix
+Hackney doesn't filter out other boroughs
+Kingston upon Thames calls itself Royal Borough of Kingston when describing libraries
+Spydus to query only books (not media type computer, audio, video)
+Build web front end
+    reroute no borough selection (or do nothing)
+    borough selection on search results
+    borough selection map
+    results filters
+    logo
+    improve design
+Host website

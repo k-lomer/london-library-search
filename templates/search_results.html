@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/static/search_results.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <body>
+        <div class="search_form">
+            <form action = "http://localhost:5000/search" method = "post">
+                <input type = "text" value="{{query}}" name = "query" />
+                <button type = "submit"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+        {% for result in results %}
+            <div class="box">
+                <table>
+                    <tr>
+                        <td>
+                            Title:
+                        </td>
+                        <td>
+                            <a href="{{result.url}}">{{result.title}}</a>
+                        </td>
+                    </tr>
+                    {% if result.author != "" %}
+                        <tr>
+                            <td>
+                                Author:
+                            </td>
+                            <td>
+                                {{result.author}}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if result.year != 0 %}
+                        <tr>
+                            <td>
+                                Year:
+                            </td>
+                            <td>
+                                {{result.year}}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td>
+                            Borough:
+                        </td>
+                        <td>
+                            {{result.borough}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Libraries:
+                        </td>
+                        <td>
+                            {{result.libraries}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        {% endfor %}
+    </body>
+</html>

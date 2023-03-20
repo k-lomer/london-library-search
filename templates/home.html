@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/static/home.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script language="JavaScript">
+            function toggle(source) {
+              checkboxes = document.getElementsByName("boroughs");
+              for(var i=0, n=checkboxes.length;i<n;i++) {
+                checkboxes[i].checked = source.checked;
+              }
+            }
+        </script>
+    </head>
+    <body>
+        <div class="title">
+            <h1>
+                London Library Search
+            </h1>
+        </div>
+        <div class="search_form">
+            <form action = "http://localhost:5000/search" method = "post">
+                <input type = "text" placeholder="Search books..." name = "query" />
+                <button type = "submit"><i class="fa fa-search"></i></button>
+                <br>
+                <input type="checkbox" class="checkbox" id="select_all", onClick="toggle(this)" />
+                <label for="select_all"> Select All</label>
+                {% for borough in boroughs %}
+                    <br>
+                    <input type="checkbox" class="checkbox" id="{{borough.lower().replace(' ', '_')}}" name="boroughs" value="{{borough}}">
+                    <label for="{{borough.lower().replace(' ', '_')}}"> {{borough}}</label>
+                {% endfor %}
+            </form>
+        </div>
+    </body>
+</html>

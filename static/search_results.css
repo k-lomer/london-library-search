@@ -1,0 +1,14 @@
+.search_form{
+    margin: 40px;
+}
+
+.box{
+    margin: 40px;
+    padding: 25px;
+    border: 1px solid black;
+}
+
+td{
+  vertical-align: top;
+  text-align: left;
+}

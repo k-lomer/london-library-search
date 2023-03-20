@@ -1,0 +1,15 @@
+.title{
+    margin: 40px;
+    padding-top: 100px;
+    padding-bottom: 25px;
+    text-align: center;
+}
+
+.search_form{
+    margin: 10px;
+    text-align: center;
+}
+
+.checkbox{
+    text-align: left;
+}
