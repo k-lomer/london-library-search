@@ -8,12 +8,12 @@ from bs4 import BeautifulSoup
 
 
 class SirsiDynix:
-    def __init__(self, base_url, additional_path_entry, borough, num_results, additional_query_params={}):
+    def __init__(self, base_url, borough, query_location, library_borough_name, num_results):
         self.base_url = base_url
-        self.additional_path_entry = additional_path_entry
         self.borough = borough
+        self.query_location = query_location
+        self.library_borough_name = library_borough_name
         self.num_results = num_results
-        self.additional_query_params = additional_query_params
 
     def get_results(self, query):
         results = SearchResults()
@@ -22,9 +22,9 @@ class SirsiDynix:
             "qf": "FORMAT	Format	BOOK	Books",
             "te": "ILS",
             "h": "1",
-            **self.additional_query_params
+            "lm": self.query_location
         }
-        search_url = self.base_url + "/client/rss/hitlist/" + self.additional_path_entry + "/" + urllib.parse.urlencode(params)
+        search_url = self.base_url + "/" + urllib.parse.urlencode(params)
         feed = feedparser.parse(search_url)
         for entry in feed.entries[:self.num_results]:
             entry_details = self.get_feed_result(entry)
@@ -35,6 +35,8 @@ class SirsiDynix:
         title = html.unescape(entry["title"].rsplit(" / ", 1)[0])
         if title.startswith("Title "):
             title = title.replace("Title ", "", 1)
+        if title.startswith("First Title value, for Searching "):
+            title = title.replace("First Title value, for Searching ", "", 1)
         summary = entry["summary"].split("<br />")
         author = ""
         year = 0
@@ -50,10 +52,7 @@ class SirsiDynix:
         url = entry["link"]
         entry_page = requests.get(url)
         entry_soup = BeautifulSoup(entry_page.content, "html.parser")
-        libraries = set( row.find("td", {"class": "detailItemsTable_LIBRARY"}).find("div", {"class": "hidden"}).text for row in entry_soup.find_all("tr", {"class": "detailItemsTableRow"}) )
-        libraries = (library.replace(" (" + self.borough + ")", "") for library in libraries)
+        libraries = set(row.find("td", {"class": "detailItemsTable_LIBRARY"}).find("div", {"class": "hidden"}).text for row in entry_soup.find_all("tr", {"class": "detailItemsTableRow"}))
+        if self.library_borough_name:
+            libraries = (library.replace(" (" + self.library_borough_name + ")", "") for library in libraries if library.endswith("(" + self.library_borough_name + ")") or library[-1] != ")")
         return Book(title, author, year, self.borough, libraries, url)
-
-class LlcSirsiDynix(SirsiDynix):
-    def __init__(self, borough, additional_path_entry, borough_search_param, num_results):
-        super().__init__("https://llc.ent.sirsidynix.net.uk", additional_path_entry, borough, num_results, {"lm": borough_search_param})

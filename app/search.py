@@ -21,4 +21,4 @@ class Search:
 
 if __name__ == "__main__":
     query = "book"
-    print(Search(query, ["Merton"]).get_results())
+    print(Search(query, ["Croydon"]).get_results())

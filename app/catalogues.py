@@ -1,15 +1,15 @@
-from app.catalogue_base.sirsi_dynix import LlcSirsiDynix, SirsiDynix
+from app.catalogue_base.sirsi_dynix import SirsiDynix
 from app.catalogue_base.spydus import Spydus
 
 
-class BarkingAndDagenhamCatalogue(LlcSirsiDynix):
+class BarkingAndDagenhamCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Barking and Dagenham", "barking-and-dagenham", "BARKING_DAGENHAM", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/barking-and-dagenham", "Barking and Dagenham", "BARKING_DAGENHAM", "Barking and Dagenham", num_results)
 
 
-class BrentCatalogue(LlcSirsiDynix):
+class BrentCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Brent", "brent", "BRENT", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/brent", "Brent", "BRENT", "Brent", num_results)
 
 
 class CamdenCatalogue(Spydus):
@@ -19,86 +19,87 @@ class CamdenCatalogue(Spydus):
 
 class CityOfLondonCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("https://col.ent.sirsidynix.net.uk", "default", "City of London", num_results)
+        super().__init__("https://col.ent.sirsidynix.net.uk/client/rss/hitlist/default", "City of London", "LENDING", "", num_results)
 
 
 class CityOfWestminsterCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("https://trib.ent.sirsidynix.net.uk", "wcc", "City of Westminster", num_results, {"lm": "WCC"})
+        super().__init__("https://trib.ent.sirsidynix.net.uk/client/rss/hitlist/wcc", "City of Westminster", "WCC", "", num_results)
 
 
-class CroydonCatalogue(LlcSirsiDynix):
+class CroydonCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Croydon", "croydon", "CROYDON", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/croydon", "Croydon", "CROYDON", "Croydon", num_results)
 
 
-class EalingCatalogue(LlcSirsiDynix):
+class EalingCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Ealing", "ealing", "EALING", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/ealing", "Ealing", "EALING", "Ealing", num_results)
 
 
-class EnfieldCatalogue(LlcSirsiDynix):
+class EnfieldCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Enfield", "enfield", "ENFIELD", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/enfield", "Enfield", "ENFIELD", "Enfield", num_results)
 
 
-class HackneyCatalogue(LlcSirsiDynix):
+class HackneyCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Hackney", "hackney", "HACKNEY", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/hackney", "Hackney", "HACKNEY", "Hackney", num_results)
 
 
-class HammersmithAndFulhamCatalogue(LlcSirsiDynix):
+class HammersmithAndFulhamCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Hammersmith and Fulham", "lbhf", "HAMMERSMITHFULHAM", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/lbhf", "Hammersmith and Fulham", "HAMMERSMITHFULHAM", "Hammersmith and Fulham", num_results)
 
 
-class HarrowCatalogue(LlcSirsiDynix):
+class HarrowCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Harrow", "harrow", "HARROW", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/harrow", "Harrow", "HARROW", "Harrow", num_results)
 
 
-class HaveringCatalogue(LlcSirsiDynix):
+class HaveringCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Havering", "havering", "HAVERING", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/havering", "Havering", "HAVERING", "Havering", num_results)
 
 
 class HillingdonCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("https://hldn.ent.sirsidynix.net.uk", "public", "Hillingdon", num_results, {"lm": "PUBLIC"})
+        super().__init__("https://hldn.ent.sirsidynix.net.uk/client/rss/hitlist/public", "Hillingdon", "PUBLIC", "", num_results)
 
 
-class HounslowCatalogue(LlcSirsiDynix):
+class HounslowCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Hounslow", "hounslow", "HOUNSLOW", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/hounslow", "Hounslow", "HOUNSLOW", "Hounslow", num_results)
 
 
 class KensingtonAndChelseaCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("https://trib.ent.sirsidynix.net.uk", "rbkc", "Kensington and Chelsea", num_results, {"lm": "RBKC"})
+        super().__init__("https://trib.ent.sirsidynix.net.uk/client/rss/hitlist/rbkc", "Kensington and Chelsea", "RBKC", "", num_results)
 
 
-class KingstonUponThamesCatalogue(LlcSirsiDynix):
+class KingstonUponThamesCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Kingston upon Thames", "kingston", "KINGSTON", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/kingston", "Kingston upon Thames", "KINGSTON", "Royal Borough of Kingston", num_results)
 
 
-class LewishamCatalogue(LlcSirsiDynix):
+class LewishamCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Lewisham", "lewisham", "LEWISHAM", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/lewisham", "Lewisham", "LEWISHAM", "Lewisham", num_results)
+
 
 class MertonCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("https://libraries.merton.gov.uk", "merton", "Merton", num_results, {"lm": "MERTON"})
+        super().__init__("https://libraries.merton.gov.uk/client/rss/hitlist/merton", "Merton", "MERTON", "Merton", num_results)
 
 
-class NewhamCatalogue(LlcSirsiDynix):
+class NewhamCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Newham", "newham", "NEWHAM", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/newham", "Newham", "NEWHAM", "Newham", num_results)
 
 
-class RedbridgeCatalogue(LlcSirsiDynix):
+class RedbridgeCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Redbridge", "redbridge", "REDBRIDGE", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/redbridge", "Redbridge", "REDBRIDGE", "Redbridge", num_results)
 
 
 class RichmondUponThamesCatalogue(Spydus):
@@ -111,19 +112,19 @@ class SouthwarkCatalogue(Spydus):
         super().__init__("https://southwark.spydus.co.uk", "Southwark", num_results)
 
 
-class SuttonCatalogue(LlcSirsiDynix):
+class SuttonCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Sutton", "sutton", "SUTTON", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/sutton", "Sutton", "SUTTON", "Sutton", num_results)
 
 
-class TowerHamletsCatalogue(LlcSirsiDynix):
+class TowerHamletsCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Tower Hamlets", "tower-hamlets", "TOWER_HAMLETS", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/tower-hamlets", "Tower Hamlets", "TOWER_HAMLETS", "Tower Hamlets", num_results)
 
 
-class WalthamForestCatalogue(LlcSirsiDynix):
+class WalthamForestCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("Waltham Forest", "walthamforest", "WALTHAM_FOREST", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/walthamforest", "Waltham Forest", "WALTHAM_FOREST", "Waltham Forest", num_results)
 
 
 catalogues = {

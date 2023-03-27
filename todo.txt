@@ -10,8 +10,6 @@ Add boroughs:
 multithread catalogue searches
 multithread Spydus
 multithread SirsiDynix
-Hackney doesn't filter out other boroughs
-Kingston upon Thames calls itself Royal Borough of Kingston when describing libraries
 Spydus to query only books (not media type computer, audio, video)
 Build web front end
     reroute no borough selection (or do nothing)
