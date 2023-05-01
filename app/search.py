@@ -5,7 +5,7 @@ class Search:
     def __init__(self, query, boroughs):
         self.query = query
         self.boroughs = boroughs
-        self.num_results = 2
+        self.num_results = 10
         self.results = SearchResults()
 
     def do_search(self):
@@ -20,5 +20,5 @@ class Search:
 
 
 if __name__ == "__main__":
-    query = "book"
-    print(Search(query, ["Croydon"]).get_results())
+    query = "harry potter"
+    print(Search(query, ["Barnet"]).get_results())

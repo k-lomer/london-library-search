@@ -1,16 +1,11 @@
 Add boroughs:
-    Barnet - Prism
-    Bexley - Arena
-    Bromley - Prism
-    Greenwich - Prism
     Haringey - ???
-    Islington - Prism
-    Lambeth - ???
-    Wandsworth - Prism
 multithread catalogue searches
 multithread Spydus
 multithread SirsiDynix
+multithread Arena
 Spydus to query only books (not media type computer, audio, video)
+Move num_results from init to query
 Build web front end
     reroute no borough selection (or do nothing)
     borough selection on search results
@@ -19,3 +14,4 @@ Build web front end
     logo
     improve design
 Host website
+Add requirements versions
