@@ -70,5 +70,8 @@ class Prism:
             options = availability.find("ul", {"class": "options"})
             if options is not None:
                 libraries = [ span.text for span in options.find_all("span", {"itemprop": "name"})]
-
-        return Book(title, authors, year, self.borough, libraries, item_url)
+        if len(libraries) > 0:
+            return Book(title, authors, year, self.borough, libraries, item_url)
+        else:
+            # No availability for this item.
+            return None

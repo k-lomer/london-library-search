@@ -136,7 +136,7 @@ class NewhamCatalogue(SirsiDynix):
 
 class RedbridgeCatalogue(SirsiDynix):
     def __init__(self, num_results):
-        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/redbridge", "Redbridge", "REDBRIDGE", "(Redbridge)", num_results)
+        super().__init__("https://llc.ent.sirsidynix.net.uk/client/rss/hitlist/redbridge", "Redbridge", "REDBRIDGE", "(Redbridge)", num_results, True, False)
 
 
 class RichmondUponThamesCatalogue(Spydus):

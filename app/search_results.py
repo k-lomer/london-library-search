@@ -12,6 +12,9 @@ class SearchResults:
     def __next__(self):
         return self.results.__next__()
 
+    def __len__(self):
+        return len(self.results)
+
     def add_result(self, result):
         self.results.append(result)
 

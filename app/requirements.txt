@@ -1,5 +1,7 @@
 bs4
 feedparser
 Flask
+nose
+parameterized
 requests
 selenium

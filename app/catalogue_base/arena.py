@@ -33,7 +33,6 @@ class Arena:
             "p_r_p_arena_urn:arena_sort_advice": "field=Relevance&direction=Descending"
         }
         search_url = self.base_url + "/search?" + urllib.parse.urlencode(params)
-        print(search_url)
         search_page = requests.get(search_url)
         session_id = ""
         jsession_ids = [cookie.split("=")[-1] for cookie in search_page.headers["set-cookie"].split(";") if cookie.startswith("JSESSIONID")]
@@ -61,29 +60,6 @@ class Arena:
         driver = webdriver.Firefox(options=options)
         driver.get(record_url)
 
-        # Get author details.
-        author = ""
-        try:
-            author = driver.find_element(By.CLASS_NAME, "arena-detail-author").text
-            if author.endswith(","):
-                author = author[:-1]
-            if author.startswith("Author: "):
-                author = author[len("Author: "):]
-        except common.exceptions.NoSuchElementException as e:
-            print(self.borough + "Arena selenium failed to get author: " + str(e))
-
-
-        # Get year details.
-        year = 0
-        try:
-            year_text = driver.find_element(By.CLASS_NAME, "arena-detail-year").text
-            if year_text.startswith("Publication year: "):
-                year_text = year_text[len("Publication year: "):]
-            if year_text.isdigit():
-                year = int(year_text)
-        except common.exceptions.NoSuchElementException as e:
-            print(self.borough + "Arena selenium failed to get year: " + str(e))
-
         # Wait for libraries to load.
         libraries = []
         timeout_seconds = 5
@@ -96,6 +72,28 @@ class Arena:
                 libraries = [lib.text.replace(" ({})".format(self.library_suffix), "") for lib in libraries[1:]]
         except common.exceptions.TimeoutException as e:
             print(self.borough + "Arena selenium failed to get libraries: " + str(e))
+
+        # Get author details.
+        author = ""
+        try:
+            author = driver.find_element(By.CLASS_NAME, "arena-detail-author").text
+            if author.endswith(","):
+                author = author[:-1]
+            if author.startswith("Author: "):
+                author = author[len("Author: "):]
+        except common.exceptions.NoSuchElementException as e:
+            pass
+
+        # Get year details.
+        year = 0
+        try:
+            year_text = driver.find_element(By.CLASS_NAME, "arena-detail-year").text
+            if year_text.startswith("Publication year: "):
+                year_text = year_text[len("Publication year: "):]
+            if year_text.isdigit():
+                year = int(year_text)
+        except common.exceptions.NoSuchElementException as e:
+            pass
 
         driver.close()
         return Book(title, author, year, self.borough, libraries, record_url)
@@ -128,7 +126,6 @@ class Arena:
         # Follow the breadcrumbs to find the libraries...
         # DOES NOT WORK! POSSIBLY AN ISSUE WITH THE COOKIES?
         libraries_url = self.base_url + "/results?random=" + "{:.17f}".format(random.random()) # yes really.
-        print( libraries_url)
         # Crate the back URL.
         record_url_params = urllib.parse.parse_qs(urllib.parse.urlparse(record_url).query)
         # Get the libraries.
