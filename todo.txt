@@ -1,11 +1,15 @@
-Add boroughs:
-    Haringey - ???
 multithread catalogue searches
 multithread Spydus
 multithread SirsiDynix
 multithread Arena
+Better error handling
 Spydus to query only books (not media type computer, audio, video)
 Move num_results from init to query
+Tests
+    Single borough
+    Results from all libraries
+    Num Results is met
+    Multi borough
 Build web front end
     reroute no borough selection (or do nothing)
     borough selection on search results
@@ -13,5 +17,7 @@ Build web front end
     results filters
     logo
     improve design
-Host website
+    favicon
+Host website and deploy - https://flask.palletsprojects.com/en/2.3.x/deploying/
 Add requirements versions
+More results button

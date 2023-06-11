@@ -1,7 +1,6 @@
 from app.search_results import Book, SearchResults
 import random
 import requests
-import time
 import urllib.parse
 from bs4 import BeautifulSoup
 from selenium import webdriver, common
@@ -70,8 +69,8 @@ class Arena:
                 author = author[:-1]
             if author.startswith("Author: "):
                 author = author[len("Author: "):]
-        except common.exceptions.NoSuchElementException:
-            pass
+        except common.exceptions.NoSuchElementException as e:
+            print(self.borough + "Arena selenium failed to get author: " + str(e))
 
 
         # Get year details.
@@ -82,8 +81,8 @@ class Arena:
                 year_text = year_text[len("Publication year: "):]
             if year_text.isdigit():
                 year = int(year_text)
-        except common.exceptions.NoSuchElementException:
-            pass
+        except common.exceptions.NoSuchElementException as e:
+            print(self.borough + "Arena selenium failed to get year: " + str(e))
 
         # Wait for libraries to load.
         libraries = []
@@ -95,9 +94,9 @@ class Arena:
             if len(libraries) > 0:
                 # Skip the first entry, it is the borough.
                 libraries = [lib.text.replace(" ({})".format(self.library_suffix), "") for lib in libraries[1:]]
-        except common.exceptions.TimeoutException:
-            print( "failed" )
-            pass
+        except common.exceptions.TimeoutException as e:
+            print(self.borough + "Arena selenium failed to get libraries: " + str(e))
+
         driver.close()
         return Book(title, author, year, self.borough, libraries, record_url)
 

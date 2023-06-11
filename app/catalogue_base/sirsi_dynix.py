@@ -8,12 +8,18 @@ from bs4 import BeautifulSoup
 
 
 class SirsiDynix:
-    def __init__(self, base_url, borough, query_location, library_borough_name, num_results):
+    def __init__(self, base_url, borough, query_location, library_borough_name, num_results, query_location_is_lm=True, library_suffix_enforced=True):
         self.base_url = base_url
         self.borough = borough
         self.query_location = query_location
+        self.query_location_is_lm = query_location_is_lm
+        self.library_suffix_enforced = library_suffix_enforced
         self.library_borough_name = library_borough_name
         self.num_results = num_results
+        self.library_substitutions = {
+            "1:HARFF": "Coombes Croft Library (Haringey)",
+            "Hounslow Library": "Hounslow Hounslow Library"
+        }
 
     def get_results(self, query):
         results = SearchResults()
@@ -22,9 +28,13 @@ class SirsiDynix:
             "qf": "FORMAT	Format	BOOK	Books",
             "te": "ILS",
             "h": "1",
-            "lm": self.query_location
         }
-        search_url = self.base_url + "/" + urllib.parse.urlencode(params)
+        location_params = {}
+        if self.query_location_is_lm:
+            location_params["lm"] = self.query_location
+        else:
+            location_params["qf"] = self.query_location
+        search_url = self.base_url + "/" + urllib.parse.urlencode(params) + "&" + urllib.parse.urlencode(location_params)
         feed = feedparser.parse(search_url)
         for entry in feed.entries[:self.num_results]:
             entry_details = self.get_feed_result(entry)
@@ -53,6 +63,15 @@ class SirsiDynix:
         entry_page = requests.get(url)
         entry_soup = BeautifulSoup(entry_page.content, "html.parser")
         libraries = set(row.find("td", {"class": "detailItemsTable_LIBRARY"}).find("div", {"class": "hidden"}).text for row in entry_soup.find_all("tr", {"class": "detailItemsTableRow"}))
-        if self.library_borough_name:
-            libraries = (library.replace(" (" + self.library_borough_name + ")", "") for library in libraries if library.endswith("(" + self.library_borough_name + ")") or library[-1] != ")")
+        libraries = [lib.strip() for lib in libraries]
+        libraries = [self.library_substitutions[lib]if lib in self.library_substitutions else lib for lib in libraries]
+        if len(self.library_borough_name) > 0:
+            if self.library_borough_name.endswith(")"):
+                if self.library_suffix_enforced:
+                    libraries = [library.replace(" " + self.library_borough_name, "") for library in libraries if library.endswith(self.library_borough_name)]
+                else:
+                    libraries = [library.replace(" " + self.library_borough_name, "") for library in libraries]
+            else:
+                libraries = [library.replace(self.library_borough_name + " ", "", 1) for library in libraries if library.startswith(self.library_borough_name)]
+        libraries = [lib.strip() for lib in libraries]
         return Book(title, author, year, self.borough, libraries, url)
