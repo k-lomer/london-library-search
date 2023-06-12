@@ -1,13 +1,13 @@
-multithread catalogue searches
+multithread boroughs
 multithread Spydus
 multithread SirsiDynix
 multithread Arena
 Better error handling
 Spydus to query only books (not media type computer, audio, video)
-Move num_results from init to query
+Figure out a way to do Arena catalogues without selenium
 Tests
-    Single borough
-    Results from all libraries
+    Test individual Catalogue types
+    Results from all boroughs
     Num Results is met
     Multi borough
 Build web front end

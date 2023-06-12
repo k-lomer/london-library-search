@@ -12,7 +12,7 @@ def home():
 def search():
     query_text = request.form["query"]
     boroughs = request.form.getlist("boroughs")
-    return render_template("search_results.html", query=query_text, results=Search(query_text, boroughs).get_results())
+    return render_template("search_results.html", query=query_text, results=Search(query_text, boroughs, 10).get_results())
 
 if __name__ == "__main__":
     app.run()

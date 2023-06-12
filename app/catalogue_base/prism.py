@@ -6,14 +6,13 @@ from bs4 import BeautifulSoup
 
 
 class Prism:
-    def __init__(self, base_url, borough, num_results):
+    def __init__(self, base_url, borough):
         self.base_url = base_url
         self.borough = borough
-        self.num_results = num_results
 
-    def get_results(self, query):
+    def get_results(self, query, num_results):
         results = SearchResults()
-        pages = ceil(self.num_results / 10)
+        pages = ceil(num_results / 10)
         for page in range(pages):
             params = {
                 "query": query + " AND format:(book) AND NOT format:(electronic_resource) AND NOT format:(ebook)",

@@ -10,15 +10,14 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 
 class Arena:
-    def __init__(self, base_url, borough, organisation_index, num_results, library_suffix=""):
+    def __init__(self, base_url, borough, organisation_index, library_suffix=""):
         self.base_url = base_url
         self.borough = borough
         self.organisation_index = organisation_index
-        self.num_results = num_results
         self.use_selenium = True
         self.library_suffix = library_suffix
 
-    def get_results(self, query):
+    def get_results(self, query, num_results):
         results = SearchResults()
         query_terms = " AND ".join(query.split())
         media_terms = " OR ".join("mediaClass_index:" + media for media in ["book", "paperback", "hardback"])
@@ -40,7 +39,7 @@ class Arena:
             session_id = jsession_ids[0]
         search_soup = BeautifulSoup(search_page.content, "html.parser")
         records = search_soup.find_all("div", {"class": "arena-record-details"})
-        for record in records[:self.num_results]:
+        for record in records[:num_results]:
             if self.use_selenium:
                 record_details = self.get_record_results_by_selenium(record)
             else:

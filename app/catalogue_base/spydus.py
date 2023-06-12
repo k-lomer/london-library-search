@@ -5,12 +5,11 @@ from bs4 import BeautifulSoup
 
 
 class Spydus:
-    def __init__(self, base_url, borough, num_results):
+    def __init__(self, base_url, borough):
         self.base_url = base_url
         self.borough = borough
-        self.num_results = num_results
 
-    def get_results(self, query):
+    def get_results(self, query, num_results):
         results = SearchResults()
         params = {
             "ENTRY": query,
@@ -18,7 +17,7 @@ class Spydus:
             "ENTRY_TYPE": "K",
             "SORTS": "SQL_REL_BIB",
             "GQ": query,
-            "NRECS": self.num_results
+            "NRECS": num_results
         }
         search_url = self.base_url + "/cgi-bin/spydus.exe/ENQ/WPAC/BIBENQ?" + urllib.parse.urlencode(params)
         search_page = requests.get(search_url)

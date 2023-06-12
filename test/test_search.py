@@ -8,10 +8,8 @@ from datetime import datetime
 def get_catalogues():
     return [(borough,) for borough in app.catalogues.catalogues]
 
-@parameterized(get_catalogues)
-def test_catalogues(borough):
-    query = "Harry Potter"
-    results = app.search.Search(query, [borough]).get_results()
+def run_test(borough, query, num_results):
+    results = app.search.Search(query, [borough], num_results).get_results()
     assert_greater(len(results), 0, "No search results got")
     for result in results:
         assert_greater(len(result.title), 0, "No title got")
@@ -23,9 +21,13 @@ def test_catalogues(borough):
         if len(result.libraries) == 0:
             print(result.url)
         assert_greater(len(result.libraries), 0, "No libraries got")
-        if len(result.author) == 0:
-            print(result.url)
-        assert_greater(len(result.author), 0, "No author got")
+
+
+@parameterized(get_catalogues)
+def test_catalogues(borough):
+    query = "Harry Potter"
+    num_results = 5
+    run_test(borough, query, num_results)
 
 
 

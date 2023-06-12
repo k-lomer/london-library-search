@@ -5,23 +5,23 @@ import requests
 import re
 import urllib.parse
 from bs4 import BeautifulSoup
+import charset_normalizer
 
 
 class SirsiDynix:
-    def __init__(self, base_url, borough, query_location, library_borough_name, num_results, query_location_is_lm=True, library_suffix_enforced=True):
+    def __init__(self, base_url, borough, query_location, library_borough_name, query_location_is_lm=True, library_suffix_enforced=True):
         self.base_url = base_url
         self.borough = borough
         self.query_location = query_location
         self.query_location_is_lm = query_location_is_lm
         self.library_suffix_enforced = library_suffix_enforced
         self.library_borough_name = library_borough_name
-        self.num_results = num_results
         self.library_substitutions = {
             "1:HARFF": "Coombes Croft Library (Haringey)",
             "Hounslow Library": "Hounslow Hounslow Library"
         }
 
-    def get_results(self, query):
+    def get_results(self, query, num_results):
         results = SearchResults()
         params = {
             "qu": query,
@@ -36,7 +36,7 @@ class SirsiDynix:
             location_params["qf"] = self.query_location
         search_url = self.base_url + "/" + urllib.parse.urlencode(params) + "&" + urllib.parse.urlencode(location_params)
         feed = feedparser.parse(search_url)
-        for entry in feed.entries[:self.num_results]:
+        for entry in feed.entries[:num_results]:
             entry_details = self.get_feed_result(entry)
             results.add_result(entry_details)
         return results
@@ -62,6 +62,22 @@ class SirsiDynix:
         url = entry["link"]
         entry_page = requests.get(url)
         entry_soup = BeautifulSoup(entry_page.content, "html.parser")
+
+        # Get author if still needed.
+        if len(author) == 0:
+            author_select = entry_soup.select( "div.text-p.PERSONAL_AUTHOR")
+            if len(author_select) > 0:
+                author = ";".join([a.text for a in author_select])
+        if len(author) == 0:
+            author_select = entry_soup.select("div.text-p.INITIAL_AUTHOR_SRCH")
+            if len(author_select) > 0:
+                author = "; ".join([a.text for a in author_select])
+        if len(author) == 0:
+            author_select = entry_soup.select("div.text-p.AUTHOR")
+            if len(author_select) > 0:
+                author = "; ".join([a.text for a in author_select])
+
+        # Get libraries.
         libraries = set(row.find("td", {"class": "detailItemsTable_LIBRARY"}).find("div", {"class": "hidden"}).text for row in entry_soup.find_all("tr", {"class": "detailItemsTableRow"}))
         libraries = [lib.strip() for lib in libraries]
         libraries = [self.library_substitutions[lib]if lib in self.library_substitutions else lib for lib in libraries]
