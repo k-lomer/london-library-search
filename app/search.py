@@ -3,20 +3,18 @@ from app.search_results import SearchResults
 
 class Search:
     def __init__(self, query, boroughs, num_results=5):
-        self.query = query
-        self.boroughs = boroughs
-        self.num_results = num_results
-        self.results = SearchResults()
+        self.catalogues = [catalogues[borough](query, num_results) for borough in boroughs if borough in catalogues]
 
-    def do_search(self):
-        for borough, catalogue in catalogues.items():
-            if borough in self.boroughs:
-                self.results.add_results(catalogue().get_results(self.query, self.num_results))
 
     def get_results(self):
-        self.do_search()
-        return self.results
-
+        for cat in self.catalogues:
+            cat.start()
+        for cat in self.catalogues:
+            cat.join()
+        results = SearchResults()
+        for cat in self.catalogues:
+            results.add_results(cat.results)
+        return results
 
 
 if __name__ == "__main__":

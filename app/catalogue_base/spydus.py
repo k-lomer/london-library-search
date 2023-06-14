@@ -1,23 +1,28 @@
 from app.search_results import Book, SearchResults
 import requests
+from threading import Thread
 import urllib.parse
 from bs4 import BeautifulSoup
 
 
-class Spydus:
-    def __init__(self, base_url, borough):
+class Spydus(Thread):
+    def __init__(self, query, num_results, base_url, borough):
+        super().__init__()
+        self.query = query
+        self.num_results = num_results
+        self.results = SearchResults()
         self.base_url = base_url
         self.borough = borough
 
-    def get_results(self, query, num_results):
-        results = SearchResults()
+
+    def run(self):
         params = {
-            "ENTRY": query,
+            "ENTRY": self.query,
             "ENTRY_NAME": "BS",
             "ENTRY_TYPE": "K",
             "SORTS": "SQL_REL_BIB",
-            "GQ": query,
-            "NRECS": num_results
+            "GQ": self.query,
+            "NRECS": self.num_results
         }
         search_url = self.base_url + "/cgi-bin/spydus.exe/ENQ/WPAC/BIBENQ?" + urllib.parse.urlencode(params)
         search_page = requests.get(search_url)
@@ -26,8 +31,8 @@ class Spydus:
         for card in cards:
             card_details = self.get_card_result(card)
             if card_details is not None:
-                results.add_result(card_details)
-        return results
+                self.results.add_result(card_details)
+
 
     def get_card_result(self, card):
         card_title = card.find( "h2", {"class": "card-title"})
@@ -52,7 +57,6 @@ class Spydus:
                     year = row.text.split()[-1].replace(".", "")
 
             # Convert the year to a digit or try to get it from somewhere else.
-
             if not year.isdigit():
                 year = item_soup.find("div", {"class": "card-text recdetails"}).find_all("span")[-1].text
             if year.isdigit():

@@ -3,13 +3,17 @@ import feedparser
 import html
 import requests
 import re
+from threading import Thread
 import urllib.parse
 from bs4 import BeautifulSoup
-import charset_normalizer
 
 
-class SirsiDynix:
-    def __init__(self, base_url, borough, query_location, library_borough_name, query_location_is_lm=True, library_suffix_enforced=True):
+class SirsiDynix(Thread):
+    def __init__(self, query, num_results, base_url, borough, query_location, library_borough_name, query_location_is_lm=True, library_suffix_enforced=True):
+        super().__init__()
+        self.query = query
+        self.num_results = num_results
+        self.results = SearchResults()
         self.base_url = base_url
         self.borough = borough
         self.query_location = query_location
@@ -21,10 +25,10 @@ class SirsiDynix:
             "Hounslow Library": "Hounslow Hounslow Library"
         }
 
-    def get_results(self, query, num_results):
-        results = SearchResults()
+
+    def run(self):
         params = {
-            "qu": query,
+            "qu": self.query,
             "qf": "FORMAT	Format	BOOK	Books",
             "te": "ILS",
             "h": "1",
@@ -36,10 +40,10 @@ class SirsiDynix:
             location_params["qf"] = self.query_location
         search_url = self.base_url + "/" + urllib.parse.urlencode(params) + "&" + urllib.parse.urlencode(location_params)
         feed = feedparser.parse(search_url)
-        for entry in feed.entries[:num_results]:
+        for entry in feed.entries[:self.num_results]:
             entry_details = self.get_feed_result(entry)
-            results.add_result(entry_details)
-        return results
+            self.results.add_result(entry_details)
+
 
     def get_feed_result(self, entry):
         title = html.unescape(entry["title"].rsplit(" / ", 1)[0])

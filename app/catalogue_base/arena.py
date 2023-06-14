@@ -1,6 +1,7 @@
 from app.search_results import Book, SearchResults
 import random
 import requests
+from threading import Thread
 import urllib.parse
 from bs4 import BeautifulSoup
 from selenium import webdriver, common
@@ -9,17 +10,21 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 
-class Arena:
-    def __init__(self, base_url, borough, organisation_index, library_suffix=""):
+class Arena(Thread):
+    def __init__(self, query, num_results, base_url, borough, organisation_index, library_suffix=""):
+        super().__init__()
+        self.query = query
+        self.num_results = num_results
+        self.results = SearchResults()
         self.base_url = base_url
         self.borough = borough
         self.organisation_index = organisation_index
         self.use_selenium = True
         self.library_suffix = library_suffix
 
-    def get_results(self, query, num_results):
-        results = SearchResults()
-        query_terms = " AND ".join(query.split())
+
+    def run(self):
+        query_terms = " AND ".join(self.query.split())
         media_terms = " OR ".join("mediaClass_index:" + media for media in ["book", "paperback", "hardback"])
         query_param = "organisationId_index:" + self.organisation_index + " AND (" + media_terms + ") AND (" + query_terms + ")"
         params = {
@@ -39,14 +44,14 @@ class Arena:
             session_id = jsession_ids[0]
         search_soup = BeautifulSoup(search_page.content, "html.parser")
         records = search_soup.find_all("div", {"class": "arena-record-details"})
-        for record in records[:num_results]:
+        for record in records[:self.num_results]:
             if self.use_selenium:
                 record_details = self.get_record_results_by_selenium(record)
             else:
                 record_details = self.get_record_result_by_requests(record, session_id)
             if record_details is not None:
-                results.add_result(record_details)
-        return results
+                self.results.add_result(record_details)
+
 
     def get_record_results_by_selenium(self, record):
         record_title_link = record.find("div", {"class": "arena-record-title"}).find( "a" )
@@ -96,6 +101,7 @@ class Arena:
 
         driver.close()
         return Book(title, author, year, self.borough, libraries, record_url)
+
 
     # DOES NOT WORK, DO NOT USE
     def get_record_result_by_requests(self, record, session_id):

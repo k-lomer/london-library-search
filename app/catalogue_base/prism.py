@@ -1,21 +1,26 @@
 from app.search_results import Book, SearchResults
 from math import ceil
 import requests
+from threading import Thread
 import urllib.parse
 from bs4 import BeautifulSoup
 
 
-class Prism:
-    def __init__(self, base_url, borough):
+class Prism(Thread):
+    def __init__(self, query, num_results, base_url, borough):
+        super().__init__()
+        self.query = query
+        self.num_results = num_results
+        self.results = SearchResults()
         self.base_url = base_url
         self.borough = borough
 
-    def get_results(self, query, num_results):
-        results = SearchResults()
-        pages = ceil(num_results / 10)
+
+    def run(self):
+        pages = ceil(self.num_results / 10)
         for page in range(pages):
             params = {
-                "query": query + " AND format:(book) AND NOT format:(electronic_resource) AND NOT format:(ebook)",
+                "query": self.query + " AND format:(book) AND NOT format:(electronic_resource) AND NOT format:(ebook)",
                 "offset": page * 10
             }
             search_url = self.base_url + "items?" + urllib.parse.urlencode(params)
@@ -23,13 +28,10 @@ class Prism:
             search_soup = BeautifulSoup(search_page.content, "html.parser")
             items = search_soup.find_all("div", {"class": "item"})
             for item in items:
-                title = item.find("h2", {"class": "title"})
-                if title:
-                    item_url = self.base_url + title.find( "a" )["href"]
                 item_result = self.get_item_result(item)
                 if item_result is not None:
-                    results.add_result(item_result)
-        return results
+                    self.results.add_result(item_result)
+
 
     def get_item_result(self, item):
         title_h2 = item.find("h2", {"class": "title"})
