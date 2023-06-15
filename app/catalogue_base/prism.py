@@ -15,25 +15,32 @@ class Prism(Thread):
         self.base_url = base_url
         self.borough = borough
 
-
     def run(self):
         pages = ceil(self.num_results / 10)
+        threads = []
         for page in range(pages):
             params = {
                 "query": self.query + " AND format:(book) AND NOT format:(electronic_resource) AND NOT format:(ebook)",
                 "offset": page * 10
             }
             search_url = self.base_url + "items?" + urllib.parse.urlencode(params)
-            search_page = requests.get(search_url)
-            search_soup = BeautifulSoup(search_page.content, "html.parser")
-            items = search_soup.find_all("div", {"class": "item"})
-            for item in items:
-                item_result = self.get_item_result(item)
-                if item_result is not None:
-                    self.results.add_result(item_result)
+            threads.append(Thread(target=self.get_page_results, args=(search_url, self.results.results)))
+            threads[-1].start()
+        for thread in threads:
+            thread.join()
 
+    def get_page_results(self, search_url, results_list):
+        search_page = requests.get(search_url)
+        search_soup = BeautifulSoup(search_page.content, "html.parser")
+        items = search_soup.find_all("div", {"class": "item"})
+        threads = []
+        for item in items:
+            threads.append(Thread(target=self.get_item_result, args=(item, results_list)))
+            threads[-1].start()
+        for thread in threads:
+            thread.join()
 
-    def get_item_result(self, item):
+    def get_item_result(self, item, results_list):
         title_h2 = item.find("h2", {"class": "title"})
         title = title_h2.text.strip()
         item_url = self.base_url + title_h2.find("a")["href"]
@@ -72,7 +79,4 @@ class Prism(Thread):
             if options is not None:
                 libraries = [ span.text for span in options.find_all("span", {"itemprop": "name"})]
         if len(libraries) > 0:
-            return Book(title, authors, year, self.borough, libraries, item_url)
-        else:
-            # No availability for this item.
-            return None
+            results_list.append(Book(title, authors, year, self.borough, libraries, item_url))

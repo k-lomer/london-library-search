@@ -14,7 +14,6 @@ class Spydus(Thread):
         self.base_url = base_url
         self.borough = borough
 
-
     def run(self):
         params = {
             "ENTRY": self.query,
@@ -28,13 +27,14 @@ class Spydus(Thread):
         search_page = requests.get(search_url)
         search_soup = BeautifulSoup(search_page.content, "html.parser")
         cards = search_soup.find_all("fieldset", {"class": "card-list"})
+        threads = []
         for card in cards:
-            card_details = self.get_card_result(card)
-            if card_details is not None:
-                self.results.add_result(card_details)
+            threads.append(Thread(target=self.get_card_result, args=(card, self.results.results)))
+            threads[-1].start()
+        for thread in threads:
+            thread.join()
 
-
-    def get_card_result(self, card):
+    def get_card_result(self, card, results_list):
         card_title = card.find( "h2", {"class": "card-title"})
         card_title_link = card_title.find( "a" )
         item_url = self.base_url + card_title_link["href"]
@@ -70,6 +70,4 @@ class Spydus(Thread):
             availability_soup = BeautifulSoup(availability_page.content, "html.parser")
             libraries = set(loc.text for loc in availability_soup.find_all("td", {"data-caption": "Location"}))
 
-            return Book(title, authors, year, self.borough, libraries, url)
-        else:
-            return None
+            results_list.append(Book(title, authors, year, self.borough, libraries, url))

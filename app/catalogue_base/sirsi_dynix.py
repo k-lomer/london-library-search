@@ -25,7 +25,6 @@ class SirsiDynix(Thread):
             "Hounslow Library": "Hounslow Hounslow Library"
         }
 
-
     def run(self):
         params = {
             "qu": self.query,
@@ -40,12 +39,14 @@ class SirsiDynix(Thread):
             location_params["qf"] = self.query_location
         search_url = self.base_url + "/" + urllib.parse.urlencode(params) + "&" + urllib.parse.urlencode(location_params)
         feed = feedparser.parse(search_url)
+        threads = []
         for entry in feed.entries[:self.num_results]:
-            entry_details = self.get_feed_result(entry)
-            self.results.add_result(entry_details)
+            threads.append(Thread(target=self.get_feed_result, args=(entry, self.results.results)))
+            threads[-1].start()
+        for thread in threads:
+            thread.join()
 
-
-    def get_feed_result(self, entry):
+    def get_feed_result(self, entry, result_list):
         title = html.unescape(entry["title"].rsplit(" / ", 1)[0])
         if title.startswith("Title "):
             title = title.replace("Title ", "", 1)
@@ -94,4 +95,5 @@ class SirsiDynix(Thread):
             else:
                 libraries = [library.replace(self.library_borough_name + " ", "", 1) for library in libraries if library.startswith(self.library_borough_name)]
         libraries = [lib.strip() for lib in libraries]
-        return Book(title, author, year, self.borough, libraries, url)
+
+        result_list.append(Book(title, author, year, self.borough, libraries, url))

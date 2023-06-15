@@ -19,7 +19,6 @@ class Arena(Thread):
         self.base_url = base_url
         self.borough = borough
         self.organisation_index = organisation_index
-        self.use_selenium = True
         self.library_suffix = library_suffix
 
 
@@ -44,16 +43,14 @@ class Arena(Thread):
             session_id = jsession_ids[0]
         search_soup = BeautifulSoup(search_page.content, "html.parser")
         records = search_soup.find_all("div", {"class": "arena-record-details"})
+        threads = []
         for record in records[:self.num_results]:
-            if self.use_selenium:
-                record_details = self.get_record_results_by_selenium(record)
-            else:
-                record_details = self.get_record_result_by_requests(record, session_id)
-            if record_details is not None:
-                self.results.add_result(record_details)
+            threads.append(Thread(target=self.get_record_results_by_selenium, args=(record, self.results.results)))
+            threads[-1].start()
+        for thread in threads:
+            thread.join()
 
-
-    def get_record_results_by_selenium(self, record):
+    def get_record_results_by_selenium(self, record, results_list):
         record_title_link = record.find("div", {"class": "arena-record-title"}).find( "a" )
         title = record_title_link.text
         record_url = record_title_link["href"]
@@ -65,7 +62,6 @@ class Arena(Thread):
         driver.get(record_url)
 
         # Wait for libraries to load.
-        libraries = []
         timeout_seconds = 5
         try:
             element_present = expected_conditions .presence_of_element_located((By.CLASS_NAME, 'arena-holding-link'))
@@ -76,6 +72,7 @@ class Arena(Thread):
                 libraries = [lib.text.replace(" ({})".format(self.library_suffix), "") for lib in libraries[1:]]
         except common.exceptions.TimeoutException as e:
             print(self.borough + "Arena selenium failed to get libraries: " + str(e))
+            return
 
         # Get author details.
         author = ""
@@ -100,8 +97,7 @@ class Arena(Thread):
             pass
 
         driver.close()
-        return Book(title, author, year, self.borough, libraries, record_url)
-
+        results_list.append(Book(title, author, year, self.borough, libraries, record_url))
 
     # DOES NOT WORK, DO NOT USE
     def get_record_result_by_requests(self, record, session_id):
