@@ -9,11 +9,11 @@ Tests
 Build web front end
     reroute no borough selection (or do nothing)
     borough selection on search results
+    message for no results
     borough selection map
     results filters
     logo
-    improve design
-        format search results
+    mobile friendly
     favicon
 Host website and deploy - https://flask.palletsprojects.com/en/2.3.x/deploying/
 Add requirements versions

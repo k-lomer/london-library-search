@@ -1,14 +1,24 @@
-.search_form{
-    margin: 40px;
+.top_bar{
+     overflow: hidden;
+     position: fixed;
+     top: 0;
+     width: 100%;
+     background-color: #EEE;
+     height: 100px;
 }
-
-.box{
-    margin: 40px;
-    padding: 25px;
-    border: 1px solid black;
+ .search_form{
+     margin: 40px;
 }
-
-td{
-  vertical-align: top;
-  text-align: left;
+ .results_container{
+     margin-top: 140px;
+}
+ .box{
+     margin: 40px;
+     padding: 25px;
+     border: 1px solid black;
+     box-shadow: 10px 10px 5px #CCC;
+}
+ td{
+     vertical-align: top;
+     text-align: left;
 }
