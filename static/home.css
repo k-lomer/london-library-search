@@ -1,15 +1,38 @@
 .title{
-    margin: 40px;
-    padding-top: 100px;
-    padding-bottom: 25px;
-    text-align: center;
+     margin: 40px;
+     padding-top: 100px;
+     padding-bottom: 25px;
+     text-align: center;
+}
+ .search_form{
+     margin: 10px;
+     text-align: center;
+}
+ .select_all_div{
+     padding-top: 10px;
+}
+ .borough_checkbox_container{
+     width: 700px;
+     text-align: center;
+     margin-left: auto;
+     margin-right: auto;
+}
+ .borough_checkbox_div{
+     width: 200px;
+     text-align: left;
+}
+ .borough_checkbox{
+     width: auto;
+}
+ ul{
+     list-style: none;
+     -moz-column-count: 3;
+     -moz-column-gap: 20px;
+     -ms-column-count: 3;
+     -ms-column-gap: 20px;
+     -webkit-column-count: 3;
+     -webkit-column-gap: 20px;
+     column-count: 3;
+     column-gap: 20px;
 }
 
-.search_form{
-    margin: 10px;
-    text-align: center;
-}
-
-.checkbox{
-    text-align: left;
-}

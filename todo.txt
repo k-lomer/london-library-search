@@ -1,6 +1,3 @@
-multithread Spydus
-multithread SirsiDynix
-multithread Arena
 Better error handling
 Spydus to query only books (not media type computer, audio, video)
 Figure out a way to do Arena catalogues without selenium
@@ -16,6 +13,7 @@ Build web front end
     results filters
     logo
     improve design
+        format search results
     favicon
 Host website and deploy - https://flask.palletsprojects.com/en/2.3.x/deploying/
 Add requirements versions
