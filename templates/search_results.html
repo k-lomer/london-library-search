@@ -1,20 +1,38 @@
+<!DOCTYPE html>
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="/static/search_results.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-
+        <script language="JavaScript">
+            function toggle(source) {
+                checkboxes = document.getElementsByName("boroughs");
+                for (var i = 0, n = checkboxes.length; i < n; i++) {
+                    checkboxes[i].checked = source.checked;
+                }
+            }
+        </script>
     </head>
     <body>
         <div class="top_bar">
-            <div class="search_form">
-                <form action="http://localhost:5000/search" method="post">
-                    <input type="text" value="{{query}}" name="query" />
-                    <button type="submit"><i class="fa fa-search"></i></button>
-                </form>
+            <div class="title">
+                London <br>
+                Library <br>
+                Search
             </div>
         </div>
         <div class="side_bar">
+            <form action="http://localhost:5000/search" method="post">
+                <div class="search_box">
+                    <input type="text" value="{{query}}" name="query" />
+                    <button type="submit"><i class="fa fa-search"></i></button>
+                </div>
             <ul>
+                <li>
+                    <div class="borough_checkbox_div">
+                    <input type="checkbox" class="checkbox" id="select_all" ,="" onclick="toggle(this)" />
+                    <label for="select_all"> Select All</label>
+                    </div>
+                </li>
             {% for borough, checked in borough_checks.items() %}
                 <li>
                     <div class="borough_checkbox_div">
@@ -28,6 +46,7 @@
                 </li>
             {% endfor %}
             </ul>
+            </form>
         </div>
         <div class="results_container">
             {% for result in results %}

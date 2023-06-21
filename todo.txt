@@ -8,7 +8,6 @@ Tests
     Multi borough
 Build web front end
     reroute no borough selection (or do nothing)
-    borough selection on search results
     message for no results
     borough selection map
     results filters

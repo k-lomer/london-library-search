@@ -9,8 +9,15 @@ body{
      background-color: #EEE;
      height: 100px;
 }
- .search_form{
-     margin: 40px;
+.title{
+    padding-top: 8px;
+    padding-left: 13px;
+    height: 100px;
+    width: 220px;
+    text-align: left;
+    font-size: x-large;
+    font-weight: bold;
+    display: block;
 }
 .side_bar{
     height: 100%;
@@ -26,6 +33,11 @@ body{
 .side_bar::-webkit-scrollbar{
     width: 0;
     height: 0;
+}
+ .search_box{
+     padding-top: 10px;
+     padding-left: 13px;
+     padding-bottom: 20px;
 }
  .borough_checkbox_div{
      width: 210px;
