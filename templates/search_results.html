@@ -15,10 +15,14 @@
         </div>
         <div class="side_bar">
             <ul>
-            {% for borough in boroughs %}
+            {% for borough, checked in borough_checks.items() %}
                 <li>
                     <div class="borough_checkbox_div">
+                        {% if checked %}
+                        <input type="checkbox" class="checkbox borough_checkbox" id="{{borough.lower().replace(' ', '_')}}" name="boroughs" value="{{borough}}" checked>
+                        {% else %}
                         <input type="checkbox" class="checkbox borough_checkbox" id="{{borough.lower().replace(' ', '_')}}" name="boroughs" value="{{borough}}">
+                        {% endif %}
                         <label class="borough_label" for="{{borough.lower().replace(' ', '_')}}"> {{borough}}</label>
                     </div>
                 </li>

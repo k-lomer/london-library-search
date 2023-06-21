@@ -12,7 +12,8 @@ def home():
 def search():
     query_text = request.form["query"]
     boroughs = request.form.getlist("boroughs")
-    return render_template("search_results.html", boroughs=catalogues.keys(), query=query_text, results=Search(query_text, boroughs, 10).get_results())
+    borough_checks = {borough: borough in boroughs for borough in catalogues.keys() }
+    return render_template("search_results.html", borough_checks=borough_checks, query=query_text, results=Search(query_text, boroughs, 10).get_results())
 
 if __name__ == "__main__":
     app.run()
