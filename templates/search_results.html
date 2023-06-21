@@ -8,10 +8,22 @@
         <div class="top_bar">
             <div class="search_form">
                 <form action="http://localhost:5000/search" method="post">
-                    <input type="text" value="neuromancer" name="query" />
+                    <input type="text" value="{{query}}" name="query" />
                     <button type="submit"><i class="fa fa-search"></i></button>
                 </form>
             </div>
+        </div>
+        <div class="side_bar">
+            <ul>
+            {% for borough in boroughs %}
+                <li>
+                    <div class="borough_checkbox_div">
+                        <input type="checkbox" class="checkbox borough_checkbox" id="{{borough.lower().replace(' ', '_')}}" name="boroughs" value="{{borough}}">
+                        <label class="borough_label" for="{{borough.lower().replace(' ', '_')}}"> {{borough}}</label>
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
         </div>
         <div class="results_container">
             {% for result in results %}
