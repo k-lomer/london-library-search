@@ -1,5 +1,4 @@
 from app.search_results import Book, SearchResults
-import random
 import requests
 from threading import Thread
 import urllib.parse
@@ -21,8 +20,12 @@ class Arena(Thread):
         self.organisation_index = organisation_index
         self.library_suffix = library_suffix
 
-
     def run(self):
+        # Run firefox in headless mode.
+        options = Options()
+        options.add_argument("--headless")
+        driver = webdriver.Firefox(options=options)
+
         query_terms = " AND ".join(self.query.split())
         media_terms = " OR ".join("mediaClass_index:" + media for media in ["book", "paperback", "hardback"])
         query_param = "organisationId_index:" + self.organisation_index + " AND (" + media_terms + ") AND (" + query_terms + ")"
@@ -37,28 +40,18 @@ class Arena(Thread):
         }
         search_url = self.base_url + "/search?" + urllib.parse.urlencode(params)
         search_page = requests.get(search_url)
-        session_id = ""
-        jsession_ids = [cookie.split("=")[-1] for cookie in search_page.headers["set-cookie"].split(";") if cookie.startswith("JSESSIONID")]
-        if len(jsession_ids) > 0:
-            session_id = jsession_ids[0]
         search_soup = BeautifulSoup(search_page.content, "html.parser")
         records = search_soup.find_all("div", {"class": "arena-record-details"})
-        threads = []
         for record in records[:self.num_results]:
-            threads.append(Thread(target=self.get_record_results_by_selenium, args=(record, self.results.results)))
-            threads[-1].start()
-        for thread in threads:
-            thread.join()
+            self.get_record_results_by_selenium(record, self.results.results, driver)
 
-    def get_record_results_by_selenium(self, record, results_list):
+        driver.close()
+
+    def get_record_results_by_selenium(self, record, results_list, driver):
         record_title_link = record.find("div", {"class": "arena-record-title"}).find( "a" )
         title = record_title_link.text
         record_url = record_title_link["href"]
 
-        # Run firefox in headless mode.
-        options = Options()
-        options.add_argument("--headless")
-        driver = webdriver.Firefox(options=options)
         driver.get(record_url)
 
         # Wait for libraries to load.
@@ -96,67 +89,4 @@ class Arena(Thread):
         except common.exceptions.NoSuchElementException as e:
             pass
 
-        driver.close()
         results_list.append(Book(title, author, year, self.borough, libraries, record_url))
-
-    # DOES NOT WORK, DO NOT USE
-    def get_record_result_by_requests(self, record, session_id):
-        print("get_record_result_by_requests IMPLEMENTATION DOES NOT WORK")
-        record_title_link = record.find("div", {"class": "arena-record-title"}).find( "a" )
-        title = record_title_link.text
-        record_url = record_title_link["href"]
-        record_page = requests.get(record_url, cookies={"COOKIE_SUPPORT": "true", "GUEST_LANGUAGE_ID": "en_GB", "JSESSIONID": session_id})
-        record_soup = BeautifulSoup(record_page.content, "html.parser")
-        author = ""
-        record_author_details = record_soup.find("div", {"class": "arena-detail-author"})
-        if record_author_details is not None:
-            author_value = record_author_details.find("span", {"class": "arena-value"})
-            if author_value is not None:
-                author = author_value.text
-        if author.endswith(","):
-            author = author[:-1]
-        year = 0
-        record_year_details = record_soup.find("div", {"class": "arena-detail-year"})
-        if record_year_details is not None:
-            year_value = record_year_details.find("span", {"class": "arena-value"})
-            if year_value is not None:
-                year_text = year_value.text
-                if year_text.isdigit():
-                    year = int(year_text)
-
-        # Follow the breadcrumbs to find the libraries...
-        # DOES NOT WORK! POSSIBLY AN ISSUE WITH THE COOKIES?
-        libraries_url = self.base_url + "/results?random=" + "{:.17f}".format(random.random()) # yes really.
-        # Crate the back URL.
-        record_url_params = urllib.parse.parse_qs(urllib.parse.urlparse(record_url).query)
-        # Get the libraries.
-        libraries_request_params = {
-            "p_p_id": "crDetailWicket_WAR_arenaportlet",
-            "p_p_lifecycle": "2",
-            "p_p_state": "normal",
-            "p_p_mode": "view",
-            "p_p_resource_id": "/crDetailWicket/?wicket:interface=:2:recordPanel:holdingsPanel::IBehaviorListener:0:",
-            "p_p_cacheability": "cacheLevelPage",
-            "_crDetailWicket_WAR_arenaportlet_back_url": record_url_params["_crDetailWicket_WAR_arenaportlet_back_url"][0],
-            "": ""
-        }
-        libraries_request_headers = {
-            "Accept": "text/xml",
-            "Accept-Endcoding": "gzip,deflate,br",
-            "Accept-Language": "en-GB,en;q=0.5",
-            "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "libraries.lambeth.gov.uk",
-            "Origin": "https://libraries.lambeth.gov.uk",
-            "Referer": record_url,
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "same-origin",
-            "Wicket-Ajax": "true"
-        }
-
-        libraries_response = requests.post(libraries_url, json=libraries_request_params, headers=libraries_request_headers, cookies={"COOKIE_SUPPORT": "true", "GUEST_LANGUAGE_ID": "en_GB", "JSESSIONID": session_id})
-        libraries_soup = BeautifulSoup(libraries_response.content, "html.parser")
-        child_views = libraries_soup.find_all("div", {"class": "arena-holding-child-view"})
-        libraries = []
-        return Book(title, author, year, self.borough, libraries, record_url)
