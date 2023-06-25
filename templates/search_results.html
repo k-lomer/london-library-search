@@ -18,6 +18,85 @@
                 }
             }
         </script>
+        <script language="JavaScript">
+            function sortBoxes(sortType) {
+                const container = document.querySelector('.results_container');
+
+                // Get all the box divs
+                const boxes = Array.from(container.getElementsByClassName('box'));
+                console.log(boxes)
+
+                // Sort the box divs based on the selected option
+                switch (sortType) {
+                    case 'boroughAsc':
+                        boxes.sort((a, b) => {
+                            const boroughA = a.querySelector('#borough-value').textContent.trim();
+                            const boroughB = b.querySelector('#borough-value').textContent.trim();
+                            return boroughA.localeCompare(boroughB);
+                        });
+                        break;
+                    case 'boroughDesc':
+                        boxes.sort((a, b) => {
+                            const boroughA = a.querySelector('#borough-value').textContent.trim();
+                            const boroughB = b.querySelector('#borough-value').textContent.trim();
+                            return boroughB.localeCompare(boroughA);
+                        });
+                        break;
+                    case 'titleAsc':
+                        boxes.sort((a, b) => {
+                            const titleA = a.querySelector('#title-value').textContent.trim();
+                            const titleB = b.querySelector('#title-value').textContent.trim();
+                            return titleA.localeCompare(titleB);
+                        });
+                        break;
+                    case 'titleDesc':
+                        boxes.sort((a, b) => {
+                            const titleA = a.querySelector('#title-value').textContent.trim();
+                            const titleB = b.querySelector('#title-value').textContent.trim();
+                            return titleB.localeCompare(titleA);
+                        });
+                        break;
+                    case 'yearAsc':
+                        boxes.sort((a, b) => {
+                            const yearAElement = a.querySelector('#year-value');
+                            const yearBElement = b.querySelector('#year-value');
+                            const yearA = yearAElement ? parseInt(yearAElement.textContent.trim()) : Number.MAX_VALUE;
+                            const yearB = yearBElement ? parseInt(yearBElement.textContent.trim()) : Number.MAX_VALUE;
+                            return yearA - yearB;
+                        });
+                        break;
+                    case 'yearDesc':
+                        boxes.sort((a, b) => {
+                            const yearAElement = a.querySelector('#year-value');
+                            const yearBElement = b.querySelector('#year-value');
+                            const yearA = yearAElement ? parseInt(yearAElement.textContent.trim()) : Number.MIN_VALUE;
+                            const yearB = yearBElement ? parseInt(yearBElement.textContent.trim()) : Number.MIN_VALUE;
+                            return yearB - yearA;
+                        });
+                        break;
+                    default:
+                        return;
+                }
+
+                // Reorder the box divs in the container
+                for (const box of boxes) {
+                    container.appendChild(box);
+                }
+            }
+        </script>
+        <script>
+            window.onload = function() {
+                // Get the sort dropdown element
+                var sortDropdown = document.getElementById('sortDropdown');
+
+                // Get the selected value from the dropdown
+                var selectedSortType = sortDropdown.value;
+
+                // Call the sort function with the selected sort type
+                sortBoxes(selectedSortType);
+            };
+        </script>
+
     </head>
     <body>
         <div class="top_bar">
@@ -26,6 +105,14 @@
                 Library <br>
                 Search
             </div>
+            <select id="sortDropdown" onchange="sortBoxes(this.value);">
+                <option value="boroughAsc">Borough Ascending</option>
+                <option value="boroughDesc">Borough Descending</option>
+                <option value="titleAsc">Title Ascending</option>
+                <option value="titleDesc">Title Descending</option>
+                <option value="yearAsc">Year Ascending</option>
+                <option value="yearDesc">Year Descending</option>
+            </select>
         </div>
         <div class="side_bar">
             <form action="http://localhost:5000/search" method="post">
@@ -36,7 +123,7 @@
             <ul>
                 <li>
                     <div class="borough_checkbox_div">
-                    <input type="checkbox" class="checkbox" id="select_all" ,="" onclick="toggle(this)" />
+                    <input type="checkbox" class="checkbox" id="select_all" onclick="toggle(this)" />
                     <label for="select_all"> Select All</label>
                     </div>
                 </li>
@@ -63,7 +150,7 @@
                         <td>
                             Title:
                         </td>
-                        <td>
+                        <td id="title-value">
                             <a href="{{result.url}}">{{result.title}}</a>
                         </td>
                     </tr>
@@ -72,7 +159,7 @@
                         <td>
                             Author:
                         </td>
-                        <td>
+                        <td id="author-value">
                             {{result.author}}
                         </td>
                     </tr>
@@ -81,7 +168,7 @@
                         <td>
                             Year:
                         </td>
-                        <td>
+                        <td id="year-value">
                             {{result.year}}
                         </td>
                     </tr>
@@ -90,7 +177,7 @@
                         <td>
                             Borough:
                         </td>
-                        <td>
+                        <td id="borough-value">
                             {{result.borough}}
                         </td>
                     </tr>
@@ -98,7 +185,7 @@
                         <td>
                             Libraries:
                         </td>
-                        <td>
+                        <td id="libraries-value">
                             {{result.libraries}}
                         </td>
                     </tr>
